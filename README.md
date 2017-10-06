@@ -1,0 +1,2 @@
+# AdminApp
+Manage administration
