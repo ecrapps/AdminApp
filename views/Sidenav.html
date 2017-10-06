@@ -1,0 +1,16 @@
+<md-toolbar layout="row" layout-align="left center" ng-cloak="ng-cloak">
+  <a href="#"><img src="assets/img/DB_eM_rgb_54px.png" flex-offset="55"></a>
+</md-toolbar>
+
+<div layout-padding>
+	<md-list flex ng-repeat="menu in menus">
+	  	<md-list-item class="md-3-line" ui-sref-active="activeListSideNav" ui-sref="{{menu.state}}">
+	    	<div class="md-list-item-text " layout="column">
+	      		<h3>{{ menu.name }}</h3>
+	      		<p>{{ menu.title }}</p>
+	    	</div>
+	  	</md-list-item>
+	</md-list>
+</div>
+  
+</div>

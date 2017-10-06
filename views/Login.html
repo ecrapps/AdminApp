@@ -1,0 +1,26 @@
+<div ng-controller="LoginController">
+	<div class="page-login" layout="row" layout-align="space-around" layout-padding="layout-padding" ng-cloak="ng-cloak">
+	  <md-card flex="flex" flex-gt-sm="50" flex-gt-md="33">
+	    <md-card-content>
+	      <form name="Form" ng-submit="login(user)">
+	      	<md-input-container class="md-block" flex-gt-sm>
+	          <label>Login</label>
+	          <input ng-model="user.login" required>
+	          <div ng-messages="Form.login.$error" role="alert" multiple="">
+	            <div class="my-message" ng-message="required">Login field is required</div>
+	          </div>
+	        </md-input-container>
+	        <md-input-container class="md-block">
+	          <label>Password</label>
+	          <input type="password" ng-model="user.password" required>
+	          <div ng-messages="Form.password.$error" role="alert" multiple="">
+	            <div class="my-message" ng-message="required">Password field is required</div>
+	            <div class="my-message" ng-message="md-maxlength">Password length is too long</div>
+	          </div>
+	        </md-input-container>
+	        <md-button type="submit" class="md-raised md-primary" ng-disabled="!Form.$valid" >&nbsp; Login &nbsp;</md-button>
+	      </form>
+	    </md-card-content>
+	  </md-card>
+	</div>
+</div>

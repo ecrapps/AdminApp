@@ -1,0 +1,26 @@
+<md-content>
+	<md-toolbar>
+		<div class="md-toolbar-tools">
+			<h2>{{type}} a structure</h2>
+			<span flex></span>
+	        <md-button class="md-icon-button" ng-click="cancel()">
+	          <md-icon aria-label="Close dialog">close</md-icon>
+	        </md-button>
+		</div>
+	</md-toolbar>
+	<md-content layout-padding>
+		<form name="createStructure" ng-submit="save(newStructure)">
+			<md-input-container class="md-block" flex-gt-sm>
+	          <label>Structure name</label>
+	          <input ng-model="newStructure.name" required>
+	        </md-input-container>
+	        <md-input-container class="md-block" flex-gt-sm>
+	          <label>Abbreviation</label>
+	          <input ng-model="newStructure.abreviation" required>
+	        </md-input-container>
+	        <div layout="row" layout-align="center center">
+	        	<md-button type="submit" class="md-raised md-accent" ng-disabled="!createStructure.$valid">&nbsp; Save &nbsp;</md-button>
+	        </div>
+        </form>
+	</md-content>
+</md-content>

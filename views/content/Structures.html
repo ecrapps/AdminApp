@@ -1,0 +1,29 @@
+<md-content ng-controller="AdminStructuresController as vm" md-whiteframe="4">
+  <md-toolbar>
+    <div class='md-toolbar-tools'>
+      <h2>Structures</h2>
+      <span flex></span>
+      <md-button aria-label="Add structure" class="md-fab md-mini" ng-click="vm.dialogCreateStructure($event)">
+        <md-tooltip md-direction="bottom">Add</md-tooltip>
+        <md-icon>add</md-icon>
+      </md-button>
+      <md-button ng-if="vm.selectedStructures.length === 1" aria-label="Edit structure" class="md-fab md-mini" ng-click="vm.dialogEditStructure($event)">
+        <md-tooltip md-direction="bottom">Edit</md-tooltip>
+        <md-icon>mode_edit</md-icon>
+      </md-button>
+      <md-button ng-if="vm.selectedStructures.length > 0" aria-label="Delete structure" class="md-fab md-mini" ng-click="vm.dialogDeleteStructure($event)">
+        <md-tooltip md-direction="bottom">Delete</md-tooltip>
+        <md-icon>delete</md-icon>
+      </md-button>
+    </div>
+  </md-toolbar>
+	<md-list>
+    	<md-list-item class="md-2-line" ng-repeat="structure in vm.structures" class="md-list-item-text compact" ng-click="vm.dialogAssociateStructureToUsers($event, structure)">
+    		  <md-checkbox aria-label="Selected structure" ng-click="vm.toggle(structure, vm.selectedStructures)" ></md-checkbox>
+        <div class="md-list-item-text">
+          {{ structure.name }}
+          <p>({{ structure.abreviation }})</p>
+        </div>
+    	</md-list-item>
+  	</md-list>
+</md-content>
