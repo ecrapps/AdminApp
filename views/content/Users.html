@@ -1,0 +1,42 @@
+<md-content ng-controller="AdminUsersController as vm" md-whiteframe="4">
+  <md-toolbar>
+    <div class='md-toolbar-tools'>
+      <h2>Users</h2>
+      <span flex></span>
+      <md-button ng-if="vm.selectedUsers.length === 1" aria-label="Information de l'utilisateur" class="md-fab md-mini" ng-click="vm.dialogUserInfos($event)">
+        <md-tooltip md-direction="bottom">Informations</md-tooltip>
+        <md-icon>remove_red_eye</md-icon>
+      </md-button>
+      <md-button aria-label="Add user" class="md-fab md-mini" ng-click="vm.dialogCreateUser($event)">
+        <md-tooltip md-direction="bottom">Add</md-tooltip>
+        <md-icon>add</md-icon>
+      </md-button>
+      <md-button ng-if="vm.selectedUsers.length === 1" aria-label="Edit user" class="md-fab md-mini" ng-click="vm.dialogEditUser($event)">
+        <md-tooltip md-direction="bottom">Edit</md-tooltip>
+        <md-icon>mode_edit</md-icon>
+      </md-button>
+      <md-button ng-if="vm.selectedUsers.length > 0" aria-label="Delete user" class="md-fab md-mini" ng-click="vm.dialogDeleteUser($event)">
+        <md-tooltip md-direction="bottom">Delete</md-tooltip>
+        <md-icon>delete</md-icon>
+      </md-button>
+    </div>
+  </md-toolbar>
+  <md-input-container layout="row">
+        <label>Filter by user</label>
+        <input ng-model="filter_search">
+    </md-input-container>
+  <md-content>
+  <md-virtual-repeat-container style="height:700px">
+	<md-list>
+    	<md-list-item class="md-2-line" md-virtual-repeat="user in vm.users | filter : filter_search" class="md-list-item-text compact" ng-click="vm.dialogAssociateUserToGroups($event, user)">
+    		  <md-checkbox aria-label="Selected user" ng-click="vm.toggle(user, vm.selectedUsers)" ></md-checkbox>
+        <div class="md-list-item-text">
+          {{ user.name }}
+          <p>({{ user.email }})</p>
+        </div>
+    	</md-list-item>
+    <!-- </md-virtual-repeat-container> -->
+  </md-list>
+  </md-virtual-repeat-container>
+  
+</md-content>

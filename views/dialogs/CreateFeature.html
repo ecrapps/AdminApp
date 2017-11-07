@@ -1,0 +1,26 @@
+<md-content>
+	<md-toolbar>
+		<div class="md-toolbar-tools">
+			<h2>Create a feature</h2>
+			<span flex></span>
+	        <md-button class="md-icon-button" ng-click="cancel()">
+	          <md-icon aria-label="Close dialog">close</md-icon>
+	        </md-button>
+		</div>
+	</md-toolbar>
+	<md-content layout-padding>
+		<form name="createFeature" ng-submit="save(newFeature)">
+			<md-select ng-model="newFeature.app" placeholder="Application" required md-no-asterisk="false">
+				<md-option  ng-repeat="app in apps" value="{{app.id}}">{{app.name}}
+				</md-option>
+			</md-select>
+			<md-input-container class="md-block" flex-gt-sm>
+	          <label>Feature</label>
+	          <input ng-model="newFeature.name" required>
+	        </md-input-container>
+	        <div layout="row" layout-align="center center">
+	        	<md-button type="submit" class="md-raised md-accent" ng-disabled="!createFeature.$valid">&nbsp; Save &nbsp;</md-button>
+	        </div>
+        </form>
+	</md-content>
+</md-content>

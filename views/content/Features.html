@@ -1,0 +1,39 @@
+<md-content ng-controller="AdminFeaturesController as vm" md-whiteframe="4">
+  <md-toolbar>
+    <div class='md-toolbar-tools'>
+      <h2>Features</h2>
+      <span flex></span>
+      <md-button aria-label="add feature" class="md-fab md-mini" ng-click="vm.dialogCreateFeature($event)">
+        <md-tooltip md-direction="bottom">Add</md-tooltip>
+        <md-icon>add</md-icon>
+      </md-button>
+      <md-button ng-if="vm.selectedFeatures.length === 1" aria-label="Edit feature" class="md-fab md-mini" ng-click="vm.dialogEditFeature($event)">
+        <md-tooltip md-direction="bottom">Edit</md-tooltip>
+        <md-icon>mode_edit</md-icon>
+      </md-button>
+      <md-button ng-if="vm.selectedFeatures.length > 0" aria-label="Delete feature" class="md-fab md-mini" ng-click="vm.dialogDeleteFeature($event)">
+        <md-tooltip md-direction="bottom">Delete</md-tooltip>
+        <md-icon>delete</md-icon>
+      </md-button>
+    </div>
+  </md-toolbar>
+	<md-input-container layout="row">
+        <label>Filter by features</label>
+        <input ng-model="filter_search">
+    </md-input-container>
+  <md-content>
+  <md-virtual-repeat-container style="height:700px">
+      <section md-virtual-repeat="app in vm.apps | filter : filter_search">
+          <md-subheader><h4>{{ app.name }}</h4></md-subheader>
+        <md-list>
+            <md-list-item ng-repeat="feature in app.features | filter : filter_search" class="md-list-item-text compact" ng-click="vm.toggle(feature, vm.selectedFeatures)">
+              <md-checkbox ng-checked="vm.exists(feature, vm.selectedFeatures)" aria-label="feature séléctionnée" ng-click="vm.toggle(feature, vm.selectedFeatures)" >
+              </md-checkbox>
+                <div class="md-list-item-text">
+                    {{ feature.name }}
+                </div>
+            </md-list-item>
+          </md-list>
+      </section>
+  </md-virtual-repeat-container>
+</md-content>

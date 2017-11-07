@@ -1,0 +1,16 @@
+<div ng-controller="HomeController">
+  <div layout="row">
+  	<md-sidenav
+	    class="md-sidenav-left"
+	    md-component-id="left"
+	    md-is-locked-open="$mdMedia('gt-md')"
+	    md-whiteframe="4"
+	    layout-fill
+	    ui-view="sidenav">
+	</md-sidenav>
+  	<div layout="column" flex>
+      	<div ui-view="toolbar"></div>
+		<div ui-view layout-padding></div>
+  	</div>
+  </div>
+</div>

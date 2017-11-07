@@ -1,0 +1,39 @@
+<md-dialog class='large-Modal'>
+	<md-toolbar>
+		<div class="md-toolbar-tools">
+			<h2>{{ modal.title }}</h2>
+			<span flex></span>
+	        <md-button class="md-icon-button" ng-click="cancel()">
+	          <md-icon aria-label="Close dialog">close</md-icon>
+	        </md-button>
+		</div>
+	</md-toolbar>
+	<!-- <i  flex-offset="15" class="material-icons">search</i> -->
+	
+	<md-dialog-content layout-padding>
+    <md-input-container layout="row">
+      <label>Filter by {{ modal.filter }}</label>
+      <input ng-model="filter_search">
+    </md-input-container>
+   	<md-list>
+   		<md-virtual-repeat-container id="associate-list-container">
+      	<md-list-item md-virtual-repeat="row in rowCollection | filter : filter_search" class="md-list-item-text compact" ng-click="toggle(row, selectedList)">
+      		<md-checkbox ng-checked="exists(row, selectedList)" aria-label="séléction" ng-click="toggle(row, selectedList)" >
+        	</md-checkbox>
+            <div class="md-list-item-text">
+              	{{ row.name }}
+            </div>
+      	</md-list-item>
+      	</md-virtual-repeat-container>
+    	</md-list>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button ng-click="cancel()">
+       Cancel
+      </md-button>
+      <md-button ng-click="apply()">
+        Apply
+      </md-button>
+    </md-dialog-actions>
+</md-dialog>

@@ -1,0 +1,11 @@
+.large-Modal{
+    width:800px;
+}
+
+#associate-list-container {
+	height: 450px;
+}
+
+.activeListSideNav{
+    background-color: #d2d2d2;
+}
