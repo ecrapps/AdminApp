@@ -307,7 +307,11 @@
 					.then(function mySuccess(response) {
 						$mdDialog.hide();
 				    }, function myError(response) {
+<<<<<<< HEAD
 				        $log.log("Update user failed");
+=======
+				        $log.log("Create user failed");
+>>>>>>> 0608ace9954a74c828cd8d49a6adb3cde6dd601c
 				    });
 			}
 	    }
