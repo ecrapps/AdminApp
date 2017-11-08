@@ -14,16 +14,55 @@
 	vm.dialogEditUser = dialogEditUser;
 	vm.dialogDeleteUser = dialogDeleteUser;
 	vm.dialogAssociateUserToGroups = dialogAssociateUserToGroups;
+	$scope.onFilterChanged = onFilterChanged;
 	vm.removeItem = removeItem;
 	vm.toggle = toggle;
 	vm.exists = exists;
+
+	// ag-grid data
+	vm.sortReverse = false;
+	vm.sortType = 'Name';
+
+    var columnDefs = [
+	   {headerName: "", field: "checked", width: 80, cellRenderer: checkedCellRendererFunc, suppressSizeToFit: true, suppressFilter: true},
+	   {headerName: "Name", field: "name", cellRenderer: nameCellRendererFunc},
+	   {headerName: "Username", field: "username", cellRenderer: nameCellRendererFunc}
+	];
+
+	$scope.gridOptions = {
+        columnDefs: columnDefs,
+        rowData: null,
+        angularCompileRows: true,
+        enableColResize : true,
+        enableSorting : true,
+	    onGridReady: function(params) {
+	    	//using setTimeout because 
+	    	//gridReady get's called before data is bound
+            setTimeout(function(){
+             	params.api.sizeColumnsToFit();
+            }, 1000);
+	    }
+    };
+    // end ag-grid data
+
+    function checkedCellRendererFunc() {
+		return '<md-checkbox class="mdCheckboxAgGrid" ng-check="exists(user, vm.selectedUsers)" ng-model="data.checked" aria-label="Selected user" ng-click="vm.toggle(data, vm.selectedUsers); vm.showSelectedUsers()"></md-checkbox>';
+	}
+
+    function nameCellRendererFunc() {
+		return '<span style="display: block;" ng-click="vm.dialogAssociateUserToGroups($event, data)">{{ data.name }}</span>';
+	}
+
+    function onFilterChanged(value) {
+	    $scope.gridOptions.api.setQuickFilter(value);
+	}
 
 	vm.getUsers();
 
 	function getUsers() {
 		AdminUsersServices.getUsers()
 			.then(function mySuccess(response) {
-				vm.users = response.data;
+				$scope.gridOptions.api.setRowData(response.data);
 		    }, function myError(response) {
 		        $log.log("Get users failed");
 		    });
@@ -79,7 +118,6 @@
 	    $mdDialog.show({
 	      controller: modalUserController,
 	      templateUrl: 'views/dialogs/CreateUser.html',
-	      windowClass: 'large-Modal',
 	      parent: angular.element(document.body),
 	      targetEvent: ev,
 	      locals: {
@@ -91,6 +129,7 @@
 	    })
 	    .then(function(answer) {
 	    	// vm.selectedUsers = null;
+	    	vm.selectedUsers = [];
 	      	vm.getUsers();
 	      	ToastService.displayToast("User edited")
 	    }, function() {
@@ -116,14 +155,14 @@
 	       for (var i = vm.selectedUsers.length - 1; i >= 0; i--) {
 	            AdminUsersServices.deleteUser(vm.selectedUsers[i].id)
 	               	.then(function(response){
+				        vm.selectedUsers = [];
+				        vm.getUsers();
 	               		ToastService.displayToast("User deleted");
 	               	}, function(error){
 	                  	$log.error("Error when trying to delete users : ", error);
 	            	});
 	            removeItem(vm.selectedUsers[i]);
 	        }
-	        vm.getUsers();
-	        vm.selectedUsers = [];
 	    }, function() {
 	       	//dialog closed
 	    });

@@ -1,5 +1,5 @@
-.large-Modal{
-    width:800px;
+body {
+    background-color: white;
 }
 
 #associate-list-container {
@@ -8,4 +8,19 @@
 
 .activeListSideNav{
     background-color: #d2d2d2;
+}
+
+.filterInput{
+    margin-top: 10%;
+    height: 30px;
+    padding-left: 5px;
+}
+
+/* ag-grid */
+.mdCheckboxAgGrid{
+    margin-top: 12px;
+}
+
+.ag-theme-material .ag-row:hover .md-button.smallCommentsButton {
+    opacity: 1;
 }

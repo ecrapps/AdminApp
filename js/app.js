@@ -1,4 +1,14 @@
-var AdminApp = angular.module('AdminApp', ['ngMaterial', 'ui.router', 'smart-table', 'ngMdIcons']);
+agGrid.initialiseAgGridWithAngular1(angular);
+
+var AdminApp = angular.module('AdminApp', 
+    [
+        'ngMaterial', 
+        'ui.router', 
+        'smart-table', 
+        'ngMdIcons',
+        'agGrid'
+    ]
+);
 
 AdminApp.constant('URL_TRAIN_API', (function() {
   var url = "http://localhost/Ecr_api/public/index.php/Admin/";
