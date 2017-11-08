@@ -9,8 +9,15 @@ AdminApp.factory('AdminUsersServices', ['$http', 'URL_TRAIN_API', function ($htt
 	    });
     }
 
-    factory.createUser = function(user) {
-    	return $http({
+    factory.createUser = function(userRaw) {
+    	var user = {
+            name : userRaw.name,
+            username : userRaw.username,
+            email : userRaw.email,
+            password : userRaw.password
+        }
+
+        return $http({
         	method : "POST",
         	url : url_api + "createUser", 
         	data: user
@@ -22,8 +29,7 @@ AdminApp.factory('AdminUsersServices', ['$http', 'URL_TRAIN_API', function ($htt
             id : userRaw.id,
             name : userRaw.name,
             username : userRaw.username,
-            email : userRaw.email,
-            status : userRaw.status,
+            email : userRaw.email
         }
 
         return $http({

@@ -97,7 +97,7 @@
 	      parent: angular.element(document.body),
 	      targetEvent: ev,
 	      locals: {
-	      	type: "Créer",
+	      	type: "Create",
 	      	user: null
 	      },
 	      clickOutsideToClose:true,
@@ -342,7 +342,7 @@
 	    }
 
 	    function save(newUser) {
-	    	if (type == "Créer") {
+	    	if (type == "Create") {
 		    	AdminUsersServices.createUser(newUser)
 					.then(function mySuccess(response) {
 						$mdDialog.hide();

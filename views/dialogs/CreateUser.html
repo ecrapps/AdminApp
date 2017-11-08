@@ -1,34 +1,44 @@
-<md-content>
-	<md-toolbar>
-		<div class="md-toolbar-tools">
-			<h2>{{ type }} a user</h2>
-			<span flex></span>
-	        <md-button class="md-icon-button" ng-click="cancel()">
-	          <md-icon aria-label="Close dialog">close</md-icon>
-	        </md-button>
-		</div>
-	</md-toolbar>
-	<md-content layout-padding>
-		<form name="createUser" ng-submit="save(newUser)">
-			<md-input-container class="md-block" flex-gt-sm>
-	          <label>Name</label>
-	          <input ng-model="newUser.name" required>
-	        </md-input-container>
-	        <md-input-container class="md-block" flex-gt-sm>
-	          <label>Username</label>
-	          <input ng-model="newUser.username" required>
-	        </md-input-container>
-	        <md-input-container class="md-block" flex-gt-sm>
-	          <label>Email</label>
-	          <input ng-model="newUser.email" ng-pattern="/^.+@.+\..+$/" required>
-	        </md-input-container>
-	        <md-input-container class="md-block" flex-gt-sm>
-	          <label>Status</label>
-	          <input ng-model="newUser.status" value="actif">
-	        </md-input-container>
-	        <div layout="row" layout-align="center center">
-	        	<md-button type="submit" class="md-raised md-accent" ng-disabled="!createUser.$valid">&nbsp; Save &nbsp;</md-button>
-	        </div>
-        </form>
+<md-dialog flex=40>
+	<md-content>
+		<md-toolbar>
+			<div class="md-toolbar-tools">
+				<h2>{{ type }} a user</h2>
+				<span flex></span>
+		        <md-button class="md-icon-button" ng-click="cancel()">
+		          <md-icon aria-label="Close dialog">close</md-icon>
+		        </md-button>
+			</div>
+		</md-toolbar>
+		<md-content layout-padding>
+			<form name="createUser" ng-submit="save(newUser)">
+				<md-input-container class="md-block" flex-gt-sm>
+		          <label>Name</label>
+		          <input ng-model="newUser.name" placeholder="ex: John Doe" required>
+		        </md-input-container>
+		        <md-input-container class="md-block" flex-gt-sm>
+		          <label>Username</label>
+		          <input ng-model="newUser.username" placeholder="ex: JohnDoe" required>
+		        </md-input-container>
+		        <md-input-container class="md-block" flex-gt-sm>
+		          <label>Email</label>
+		          <input ng-model="newUser.email" placeholder="ex: john.doe@deutschebahn.com" ng-pattern="/^.+@.+\..+$/" required>
+		        </md-input-container>
+		        <md-input-container class="md-block" flex-gt-sm>
+		          <label>Password</label>
+		          <input ng-model="newUser.password" type="password" ng-required="type === 'Create'" name="password">
+		        </md-input-container>
+		        <md-input-container class="md-block" flex-gt-sm>
+		          <label>Confirm password</label>
+		          <input ng-model="newUser.confirmPassword" type="password" ng-required="type === 'Create'" name="confirmPassword" compare-to="newUser.password" />
+		          <div ng-messages="createUser.confirmPassword.$error" class="help-block">
+		            <div ng-message="required">Confirm Password is required</div>
+		            <div ng-message="compareTo">Passwords don't match</div>
+		          </div>
+		        </md-input-container>
+		        <div layout="row" layout-align="center center">
+		        	<md-button type="submit" class="md-raised md-accent" ng-disabled="!createUser.$valid">&nbsp; Save &nbsp;</md-button>
+		        </div>
+	        </form>
+		</md-content>
 	</md-content>
-</md-content>
+</md-dialog>

@@ -6,7 +6,8 @@ var AdminApp = angular.module('AdminApp',
         'ui.router', 
         'smart-table', 
         'ngMdIcons',
-        'agGrid'
+        'agGrid',
+        'ngMessages'
     ]
 );
 
