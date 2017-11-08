@@ -1,4 +1,5 @@
-﻿AdminApp.controller('AdminGroupsController' , ['$rootScope', '$scope', '$log', '$state', '$mdDialog', 'AdminGroupsServices', 'ToastService', function ($rootScope, $scope, $log, $state, $mdDialog, AdminGroupsServices, ToastService){
+﻿AdminApp.controller('AdminGroupsController' , ['$rootScope', '$scope', '$log', '$state', '$mdDialog', 'AdminGroupsServices', 'ToastService', 
+		function ($rootScope, $scope, $log, $state, $mdDialog, AdminGroupsServices, ToastService){
 
 	var vm = this;
 
@@ -39,6 +40,7 @@
 	    	AdminGroupsServices.createGroup(result)
 		    	.then(function mySuccess(response) {
 					vm.getGroups();
+	      			ToastService.displayToast("Group created")
 			    }, function myError(response) {
 			        $log.log("Create group failed");
 			    });
@@ -63,6 +65,7 @@
 		    AdminGroupsServices.updateGroup(result, group.id)
 		    	.then(function mySuccess(response) {
 					group.name = result;
+	      			ToastService.displayToast("Group edited")
 			    }, function myError(response) {
 			        $log.log("Edit group failed");
 			    });
@@ -89,8 +92,7 @@
 	       for (var i = vm.selectedGroups.length - 1; i >= 0; i--) {
 	            AdminGroupsServices.deleteGroup(vm.selectedGroups[i].id)
 	               	.then(function(response){
-	               		ToastServices.displayToast("Group deleted");
-	                  	
+	               		ToastService.displayToast("Group deleted");
 	               	}, function(error){
 	                  	$log.error("Error when trying to delete groups : ", error);
 	            	});

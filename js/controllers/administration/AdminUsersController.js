@@ -1,4 +1,5 @@
-﻿AdminApp.controller('AdminUsersController' , ['$rootScope', '$scope', '$log', '$state', '$mdDialog', 'AdminUsersServices', 'ToastService', function ($rootScope, $scope, $log, $state, $mdDialog, AdminUsersServices, ToastService){
+﻿AdminApp.controller('AdminUsersController' , ['$rootScope', '$scope', '$log', '$state', '$mdDialog', 'AdminUsersServices', 'ToastService', 
+		function ($rootScope, $scope, $log, $state, $mdDialog, AdminUsersServices, ToastService){
 
 	var vm = this;
 
@@ -15,6 +16,7 @@
 	vm.dialogAssociateUserToGroups = dialogAssociateUserToGroups;
 	vm.removeItem = removeItem;
 	vm.toggle = toggle;
+	vm.exists = exists;
 
 	vm.getUsers();
 
@@ -65,6 +67,8 @@
 	    .then(function(answer) {
 	    	// vm.selectedUsers = null;
 	      	vm.getUsers();
+	      	vm.selectedUsers = [];
+	      	ToastService.displayToast("User created")
 	    }, function() {
 	      // Dialog closed
 	    });
@@ -88,6 +92,7 @@
 	    .then(function(answer) {
 	    	// vm.selectedUsers = null;
 	      	vm.getUsers();
+	      	ToastService.displayToast("User edited")
 	    }, function() {
 	      // Dialog closed
 	    });
@@ -111,14 +116,14 @@
 	       for (var i = vm.selectedUsers.length - 1; i >= 0; i--) {
 	            AdminUsersServices.deleteUser(vm.selectedUsers[i].id)
 	               	.then(function(response){
-	               		ToastServices.displayToast("User deleted");
-	                  	
+	               		ToastService.displayToast("User deleted");
 	               	}, function(error){
 	                  	$log.error("Error when trying to delete users : ", error);
 	            	});
 	            removeItem(vm.selectedUsers[i]);
 	        }
-	        vm.selectedUsers = [];         
+	        vm.getUsers();
+	        vm.selectedUsers = [];
 	    }, function() {
 	       	//dialog closed
 	    });
@@ -139,6 +144,10 @@
 	  	else {
 			list.push(item);
 	  	}
+	}
+
+	function exists (item, list) {
+		return list.indexOf(item) > -1;
 	}
 
     function dialogAssociateUserToGroups(ev, user) {

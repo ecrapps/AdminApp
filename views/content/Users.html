@@ -29,7 +29,7 @@
   <md-virtual-repeat-container style="height:700px">
 	<md-list>
     	<md-list-item class="md-2-line" md-virtual-repeat="user in vm.users | filter : filter_search" class="md-list-item-text compact" ng-click="vm.dialogAssociateUserToGroups($event, user)">
-    		  <md-checkbox aria-label="Selected user" ng-click="vm.toggle(user, vm.selectedUsers)" ></md-checkbox>
+    		  <md-checkbox ng-check="exists(user, vm.selectedUsers)" aria-label="Selected user" ng-click="vm.toggle(user, vm.selectedUsers)" ></md-checkbox>
         <div class="md-list-item-text">
           {{ user.name }}
           <p>({{ user.email }})</p>
