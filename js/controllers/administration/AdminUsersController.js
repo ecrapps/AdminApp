@@ -26,7 +26,7 @@
     var columnDefs = [
 	   {headerName: "", field: "checked", width: 80, cellRenderer: checkedCellRendererFunc, suppressSizeToFit: true, suppressFilter: true},
 	   {headerName: "Name", field: "name", cellRenderer: nameCellRendererFunc},
-	   {headerName: "Username", field: "username", cellRenderer: nameCellRendererFunc}
+	   {headerName: "Username", field: "username", cellRenderer: usernameCellRendererFunc}
 	];
 
 	$scope.gridOptions = {
@@ -51,6 +51,10 @@
 
     function nameCellRendererFunc() {
 		return '<span style="display: block;" ng-click="vm.dialogAssociateUserToGroups($event, data)">{{ data.name }}</span>';
+	}
+
+    function usernameCellRendererFunc() {
+		return '<span style="display: block;" ng-click="vm.dialogAssociateUserToGroups($event, data)">{{ data.username }}</span>';
 	}
 
     function onFilterChanged(value) {
