@@ -5,12 +5,11 @@ AdminApp.factory('LoginService', ['$http', 'URL_TRAIN_API', function($http, URL_
 	fct.checkLogin = checkLogin;
 
 	function checkLogin (user) {
-		return "success"
-			// $http({
-		 //        method : "POST",
-		 //        url : url_api + "login",
-		 //        params : user
-		 //    });
+		return $http({
+		        method : "POST",
+		        url : url_api + "checkLogin",
+		        data : user
+		    });
 	};
 
 	return fct;
