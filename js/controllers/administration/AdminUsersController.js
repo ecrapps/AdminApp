@@ -7,7 +7,6 @@
 	vm.users = [];
 	vm.selectedUsers = [];
 
-	// Methods
 	vm.getUsers = getUsers;
 	vm.dialogUserInfos = dialogUserInfos;
 	vm.dialogCreateUser = dialogCreateUser;
@@ -44,6 +43,40 @@
 	    }
     };
     // end ag-grid data
+
+    var w = window,
+	    d = document,
+	    e = d.documentElement,
+	    g = d.getElementsByTagName('body')[0],
+	    x = w.innerWidth || e.clientWidth || g.clientWidth,
+	    y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+
+	vm.setWidthAndHeight = setWidthAndHeight;
+
+	var contentElement = document.querySelector('#contentElement');
+	var myGrid = document.querySelector('#myGrid');
+
+	// Methods
+	function setWidthAndHeight(width, height, element) {
+    	if (width != '' && element !== null) {
+    		element.style.width = width;
+    	}
+    	if (height != '' && element !== null) {
+    		element.style.height = height;
+    	}
+	}
+
+	if (y > 870) {
+		setWidthAndHeight('', '89%', contentElement);
+	} else {
+		setWidthAndHeight('', '85%', contentElement);
+	}
+
+	if (y > 870) {
+		setWidthAndHeight('', '78%', myGrid);
+	} else {
+		setWidthAndHeight('', '70%', myGrid);
+	}
 
     function checkedCellRendererFunc() {
 		return '<md-checkbox class="mdCheckboxAgGrid" ng-check="exists(user, vm.selectedUsers)" ng-model="data.checked" aria-label="Selected user" ng-click="vm.toggle(data, vm.selectedUsers); vm.showSelectedUsers()"></md-checkbox>';

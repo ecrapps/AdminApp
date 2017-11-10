@@ -1,5 +1,5 @@
 <md-content ng-controller="AdminUsersController as vm" md-whiteframe="4">
-  <div layout="column">
+  <div layout="column" id="contentElement">
     <md-toolbar>
       <div class='md-toolbar-tools'>
         <h2>Users</h2>
@@ -23,17 +23,19 @@
       </div>
     </md-toolbar>
 
-    <div layout="column">
-      <div layout="row">
-        <div flex-offset="80"></div>
-        <div flex>
-          <input placeholder="Filter ..." class="filterInput" type="text" ng-model="filter" ng-change="onFilterChanged(filter)"/>
+    <md-content layout-padding>
+      <div layout="column">
+        <div layout="row">
+          <div flex-offset="80"></div>
+          <div flex>
+            <input placeholder="Filter ..." class="filterInput" type="text" ng-model="filter" ng-change="onFilterChanged(filter)"/>
+          </div>
+        </div>
+
+        <div style="padding-top: 26px; box-sizing: border-box;">
+            <div id="myGrid" ag-grid="gridOptions" class="ag-theme-material"></div>
         </div>
       </div>
-
-      <div style="padding-top: 26px; box-sizing: border-box;">
-          <div id="myGrid" ag-grid="gridOptions" class="ag-theme-material" style="height: 100%;"></div>
-      </div>
-    </div>
+    </md-content>
   </div>
 </md-content>

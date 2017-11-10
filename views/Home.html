@@ -1,17 +1,16 @@
-<div ng-controller="HomeController">
-  <div layout="row">
-  	<md-sidenav
-  		flex="20"
-	    class="md-sidenav-left"
-	    md-component-id="left"
-	    md-is-locked-open="$mdMedia('gt-md')"
-	    md-whiteframe="4"
-	    layout-fill
-	    ui-view="sidenav">
-	</md-sidenav>
-  	<div layout="column" flex>
-      	<div ui-view="toolbar"></div>
-		<div ui-view layout-padding></div>
-  	</div>
+<div layout="row" ng-controller="HomeController">
+  <md-sidenav
+        flex="20"
+        class="md-sidenav-left"
+        md-component-id="left"
+        md-is-locked-open="$mdMedia('gt-md')"
+        md-whiteframe="4"
+        layout-fill
+        ui-view="sidenav">
+  </md-sidenav>
+
+  <div layout="column" flex style="height: 100%">
+      <div ui-view="toolbar"></div>
+      <div ui-view layout-padding></div>
   </div>
 </div>

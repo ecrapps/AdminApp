@@ -9,7 +9,7 @@ AdminApp.controller('LoginController', ['$scope', '$state', 'LoginService', 'Toa
 			LoginService.checkLogin(user)
 				.then(function mySuccess(response) {
 			        if (response.data.loginSucceed) {
-	        			$state.go("home");
+	        			$state.go("home.users");
 	        			ToastService.displayToast('Login successful !');
 	        			IdSessionService.setIdSession(response.data.user);
 	        		} else {
