@@ -1,41 +1,45 @@
-<md-content>
-	<md-toolbar>
-		<div class="md-toolbar-tools">
-			<h2>Features for {{ group.name }}</h2>
-			<span flex></span>
-	        <md-button class="md-icon-button" ng-click="cancel()">
-	          <md-icon aria-label="Close dialog">close</md-icon>
-	        </md-button>
-		</div>
-	</md-toolbar>
-	<!-- <i  flex-offset="15" class="material-icons">search</i> -->
-	<md-input-container layout="row">
-        <label>Filter by features</label>
-        <input ng-model="filter_search">
-    </md-input-container>
+<md-dialog flex=40>
 	<md-content>
-	<md-virtual-repeat-container id="associate-list-container">
-	    <section md-virtual-repeat="app in apps | filter : filter_search">
-	      	<md-subheader><h4>{{ app.name }}</h4></md-subheader>
-	     	<md-list layout-padding>
-	        	<md-list-item ng-repeat="feature in app.features | filter : filter_search" class="md-list-item-text compact" ng-click="toggle(feature, selectedFeatures)">
-	        		<md-checkbox ng-checked="exists(feature, selectedFeatures)" aria-label="feature séléctionnée" ng-click="toggle(feature, selectedFeatures)" >
-		        	</md-checkbox>
-		            <div class="md-list-item-text">
-		              	{{ feature.name }}
-		            </div>
-	        	</md-list-item>
-	      	</md-list>
-	    </section>
-	</md-virtual-repeat-container>
-    </md-content>
-    <md-dialog-actions layout="row">
-      <span flex></span>
-      <md-button ng-click="cancel()">
-       Cancel
-      </md-button>
-      <md-button ng-click="apply()">
-        Apply
-      </md-button>
-    </md-dialog-actions>
-</md-content>
+		<md-toolbar>
+			<div class="md-toolbar-tools">
+				<h2>Features for {{ group.name }}</h2>
+				<span flex></span>
+		        <md-button class="md-icon-button" ng-click="cancel()">
+		          <md-icon aria-label="Close dialog">close</md-icon>
+		        </md-button>
+			</div>
+		</md-toolbar>
+
+		<md-content layout-padding>
+			<md-input-container layout="row">
+		        <label>Filter by features</label>
+		        <input ng-model="filter_search">
+		    </md-input-container>
+
+			<md-virtual-repeat-container id="associate-list-container">
+			    <section md-virtual-repeat="app in apps | filter : filter_search">
+			      	<md-subheader><h4>{{ app.name }}</h4></md-subheader>
+			     	<md-list layout-padding>
+			        	<md-list-item ng-repeat="feature in app.features | filter : filter_search" class="md-list-item-text compact" ng-click="toggle(feature, selectedFeatures)">
+			        		<md-checkbox ng-checked="exists(feature, selectedFeatures)" aria-label="feature séléctionnée" ng-click="toggle(feature, selectedFeatures)" >
+				        	</md-checkbox>
+				            <div class="md-list-item-text">
+				              	{{ feature.name }}
+				            </div>
+			        	</md-list-item>
+			      	</md-list>
+			    </section>
+			</md-virtual-repeat-container>
+	    </md-content>
+
+	    <md-dialog-actions layout="row">
+	      <span flex></span>
+	      <md-button ng-click="cancel()">
+	       Cancel
+	      </md-button>
+	      <md-button ng-click="apply()">
+	        Apply
+	      </md-button>
+	    </md-dialog-actions>
+	</md-content>
+</md-dialog>
