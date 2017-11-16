@@ -18,12 +18,12 @@
     </div>
   </md-toolbar>
 	<md-list>
-    	<md-list-item class="md-2-line" ng-repeat="structure in vm.structures" class="md-list-item-text compact" ng-click="vm.dialogAssociateStructureToUsers($event, structure)">
-    		  <md-checkbox aria-label="Selected structure" ng-click="vm.toggle(structure, vm.selectedStructures)" ></md-checkbox>
-        <div class="md-list-item-text">
-          {{ structure.name }}
-          <p>({{ structure.abreviation }})</p>
-        </div>
-    	</md-list-item>
-  	</md-list>
+  	<md-list-item class="md-2-line" ng-repeat="structure in vm.structures" class="md-list-item-text compact" ng-click="vm.dialogAssociateStructureToUsers($event, structure)">
+  		  <md-checkbox aria-label="Selected structure" ng-click="vm.toggle(structure, vm.selectedStructures)" ></md-checkbox>
+      <div class="md-list-item-text">
+        {{ structure.name }}
+        <p>({{ structure.abreviation }})</p>
+      </div>
+  	</md-list-item>
+	</md-list>
 </md-content>

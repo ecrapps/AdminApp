@@ -6,17 +6,17 @@
 	// Datas
 	vm.users = [];
 	vm.selectedUsers = [];
-
 	vm.getUsers = getUsers;
 	vm.dialogUserInfos = dialogUserInfos;
 	vm.dialogCreateUser = dialogCreateUser;
 	vm.dialogEditUser = dialogEditUser;
 	vm.dialogDeleteUser = dialogDeleteUser;
 	vm.dialogAssociateUserToGroups = dialogAssociateUserToGroups;
+	vm.exists = exists;
 	$scope.onFilterChanged = onFilterChanged;
 	vm.removeItem = removeItem;
+	vm.setWidthAndHeight = setWidthAndHeight;
 	vm.toggle = toggle;
-	vm.exists = exists;
 
 	// ag-grid data
 	vm.sortReverse = false;
@@ -50,8 +50,6 @@
 	    g = d.getElementsByTagName('body')[0],
 	    x = w.innerWidth || e.clientWidth || g.clientWidth,
 	    y = w.innerHeight|| e.clientHeight|| g.clientHeight;
-
-	vm.setWidthAndHeight = setWidthAndHeight;
 
 	var contentElement = document.querySelector('#contentElement');
 	var myGrid = document.querySelector('#myGrid');

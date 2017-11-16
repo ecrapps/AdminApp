@@ -1,28 +1,37 @@
 <md-content ng-controller="AdminGroupsController as vm" md-whiteframe="4">
-  <md-toolbar>
-    <div class='md-toolbar-tools'>
-      <h2>Groups</h2>
-      <span flex></span>
-      <md-button aria-label="Add group" class="md-fab md-mini" ng-click="vm.dialogCreateGroup($event)">
-        <md-tooltip md-direction="bottom">Add</md-tooltip>
-        <md-icon>add</md-icon>
-      </md-button>
-      <md-button ng-if="vm.selectedGroups.length === 1" aria-label="Edit group" class="md-fab md-mini" ng-click="vm.dialogEditGroup($event)">
-        <md-tooltip md-direction="bottom">Edit</md-tooltip>
-        <md-icon>mode_edit</md-icon>
-      </md-button>
-      <md-button ng-if="vm.selectedGroups.length > 0" aria-label="Delete group" class="md-fab md-mini" ng-click="vm.dialogDeleteGroup($event)">
-        <md-tooltip md-direction="bottom">Delete</md-tooltip>
-        <md-icon>delete</md-icon>
-      </md-button>
-    </div>
-  </md-toolbar>
-	<md-list>
-    	<md-list-item ng-repeat="group in vm.groups" class="md-list-item-text compact" ng-click="vm.dialogAssociateGroupToFeatures($event, group)">
-    		  <md-checkbox aria-label="Selected group" ng-click="vm.toggle(group, vm.selectedGroups)" ></md-checkbox>
-        <div class="md-list-item-text">
-          {{ group.name }}
+  <div layout="column" id="contentElement">
+    <md-toolbar>
+      <div class='md-toolbar-tools'>
+        <h2>Groups</h2>
+        <span flex></span>
+        <md-button aria-label="Add group" class="md-fab md-mini" ng-click="vm.dialogCreateGroup($event)">
+          <md-tooltip md-direction="bottom">Add</md-tooltip>
+          <md-icon>add</md-icon>
+        </md-button>
+        <md-button ng-if="vm.selectedGroups.length === 1" aria-label="Edit group" class="md-fab md-mini" ng-click="vm.dialogEditGroup($event)">
+          <md-tooltip md-direction="bottom">Edit</md-tooltip>
+          <md-icon>mode_edit</md-icon>
+        </md-button>
+        <md-button ng-if="vm.selectedGroups.length > 0" aria-label="Delete group" class="md-fab md-mini" ng-click="vm.dialogDeleteGroup($event)">
+          <md-tooltip md-direction="bottom">Delete</md-tooltip>
+          <md-icon>delete</md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+
+    <md-content layout-padding>
+      <div layout="column">
+        <div layout="row">
+          <div flex-offset="80"></div>
+          <div flex>
+            <input placeholder="Filter ..." class="filterInput" type="text" ng-model="filter" ng-change="onFilterChanged(filter)"/>
+          </div>
         </div>
-    	</md-list-item>
-  	</md-list>
+
+        <div style="padding-top: 26px; box-sizing: border-box;">
+            <div id="myGrid" ag-grid="gridOptions" class="ag-theme-material"></div>
+        </div>
+      </div>
+    </md-content>
+  </div>
 </md-content>

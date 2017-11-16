@@ -6,22 +6,92 @@
 	// Datas
 	vm.groups = [];
 	vm.selectedGroups = [];
-
-	// Methods
 	vm.getGroups = getGroups;
 	vm.dialogCreateGroup = dialogCreateGroup;
 	vm.dialogEditGroup = dialogEditGroup;
 	vm.dialogDeleteGroup = dialogDeleteGroup;
 	vm.dialogAssociateGroupToFeatures = dialogAssociateGroupToFeatures;
+	vm.exists = exists;
+	$scope.onFilterChanged = onFilterChanged;
 	vm.removeItem = removeItem;
+	vm.setWidthAndHeight = setWidthAndHeight;
 	vm.toggle = toggle;
+
+	// ag-grid data
+	vm.sortReverse = false;
+	vm.sortType = 'Name';
+
+    var columnDefs = [
+	   {headerName: "", field: "checked", width: 80, cellRenderer: checkedCellRendererFunc, suppressSizeToFit: true, suppressFilter: true},
+	   {headerName: "Name", field: "name", cellRenderer: nameCellRendererFunc}
+	];
+
+	$scope.gridOptions = {
+        columnDefs: columnDefs,
+        rowData: null,
+        angularCompileRows: true,
+        enableColResize : true,
+        enableSorting : true,
+	    onGridReady: function(params) {
+	    	//using setTimeout because 
+	    	//gridReady get's called before data is bound
+            setTimeout(function(){
+             	params.api.sizeColumnsToFit();
+            }, 1000);
+	    }
+    };
+    // end ag-grid data
+
+    var w = window,
+	    d = document,
+	    e = d.documentElement,
+	    g = d.getElementsByTagName('body')[0],
+	    x = w.innerWidth || e.clientWidth || g.clientWidth,
+	    y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+
+	var contentElement = document.querySelector('#contentElement');
+	var myGrid = document.querySelector('#myGrid');
+
+	// Methods
+	function setWidthAndHeight(width, height, element) {
+    	if (width != '' && element !== null) {
+    		element.style.width = width;
+    	}
+    	if (height != '' && element !== null) {
+    		element.style.height = height;
+    	}
+	}
+
+	if (y > 870) {
+		setWidthAndHeight('', '89%', contentElement);
+	} else {
+		setWidthAndHeight('', '85%', contentElement);
+	}
+
+	if (y > 870) {
+		setWidthAndHeight('', '78%', myGrid);
+	} else {
+		setWidthAndHeight('', '70%', myGrid);
+	}
+
+    function checkedCellRendererFunc() {
+		return '<md-checkbox class="mdCheckboxAgGrid" ng-check="exists(group, vm.selectedGroups)" ng-model="data.checked" aria-label="Selected group" ng-click="vm.toggle(data, vm.selectedGroups); vm.showSelectedGroups()"></md-checkbox>';
+	}
+
+    function nameCellRendererFunc() {
+		return '<span style="display: block;" ng-click="vm.dialogAssociateGroupToFeatures($event, data)">{{ data.name }}</span>';
+	}
+
+    function onFilterChanged(value) {
+	    $scope.gridOptions.api.setQuickFilter(value);
+	}
 
 	vm.getGroups();
 
 	function getGroups() {
 		AdminGroupsServices.getGroups()
 			.then(function mySuccess(response) {
-				vm.groups = response.data;
+				$scope.gridOptions.api.setRowData(response.data);
 		    }, function myError(response) {
 		        $log.log("Get groups failed");
 		    });
@@ -92,6 +162,8 @@
 	       for (var i = vm.selectedGroups.length - 1; i >= 0; i--) {
 	            AdminGroupsServices.deleteGroup(vm.selectedGroups[i].id)
 	               	.then(function(response){
+	               		vm.selectedGroups = [];
+				        vm.getGroups();
 	               		ToastService.displayToast("Group deleted");
 	               	}, function(error){
 	                  	$log.error("Error when trying to delete groups : ", error);
@@ -119,6 +191,10 @@
 	  	else {
 			list.push(item);
 	  	}
+	}
+
+	function exists (item, list) {
+		return list.indexOf(item) > -1;
 	}
 
     function dialogAssociateGroupToFeatures(ev, group) {
