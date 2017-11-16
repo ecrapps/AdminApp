@@ -1,26 +1,97 @@
-﻿AdminApp.controller('AdminAppsController' , ['$rootScope', '$scope', '$log', '$state', '$mdDialog', 'AdminAppsServices', 'ToastService', function ($rootScope, $scope, $log, $state, $mdDialog, AdminAppsServices, ToastService){
+﻿AdminApp.controller('AdminAppsController' , ['$rootScope', '$scope', '$log', '$state', '$mdDialog', 'AdminAppsServices', 'ToastService', 
+		function ($rootScope, $scope, $log, $state, $mdDialog, AdminAppsServices, ToastService){
 
 	var vm = this;
 
 	// Datas
 	vm.apps = [];
 	vm.selectedApps = [];
-
-	// Methods
 	vm.getApps = getApps;
 	vm.dialogCreateApp = dialogCreateApp;
 	vm.dialogEditApp = dialogEditApp;
 	vm.dialogDeleteApp = dialogDeleteApp;
 	vm.dialogAssociateAppToUsers = dialogAssociateAppToUsers;
+	vm.exists = exists;
+	$scope.onFilterChanged = onFilterChanged;
 	vm.removeItem = removeItem;
+	vm.setWidthAndHeight = setWidthAndHeight;
 	vm.toggle = toggle;
+
+	// ag-grid data
+	vm.sortReverse = false;
+	vm.sortType = 'Name';
+
+    var columnDefs = [
+	   {headerName: "", field: "checked", width: 80, cellRenderer: checkedCellRendererFunc, suppressSizeToFit: true, suppressFilter: true},
+	   {headerName: "Name", field: "name", cellRenderer: nameCellRendererFunc}
+	];
+
+	$scope.gridOptions = {
+        columnDefs: columnDefs,
+        rowData: null,
+        angularCompileRows: true,
+        enableColResize : true,
+        enableSorting : true,
+	    onGridReady: function(params) {
+	    	//using setTimeout because 
+	    	//gridReady get's called before data is bound
+            setTimeout(function(){
+             	params.api.sizeColumnsToFit();
+            }, 1000);
+	    }
+    };
+    // end ag-grid data
+
+    var w = window,
+	    d = document,
+	    e = d.documentElement,
+	    g = d.getElementsByTagName('body')[0],
+	    x = w.innerWidth || e.clientWidth || g.clientWidth,
+	    y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+
+	var contentElement = document.querySelector('#contentElement');
+	var myGrid = document.querySelector('#myGrid');
+
+	// Methods
+	function setWidthAndHeight(width, height, element) {
+    	if (width != '' && element !== null) {
+    		element.style.width = width;
+    	}
+    	if (height != '' && element !== null) {
+    		element.style.height = height;
+    	}
+	}
+
+	if (y > 870) {
+		setWidthAndHeight('', '89%', contentElement);
+	} else {
+		setWidthAndHeight('', '85%', contentElement);
+	}
+
+	if (y > 870) {
+		setWidthAndHeight('', '78%', myGrid);
+	} else {
+		setWidthAndHeight('', '70%', myGrid);
+	}
+
+    function checkedCellRendererFunc() {
+		return '<md-checkbox class="mdCheckboxAgGrid" ng-check="exists(app, vm.selectedApps)" ng-model="data.checked" aria-label="Selected app" ng-click="vm.toggle(data, vm.selectedApps); vm.showSelectedApps()"></md-checkbox>';
+	}
+
+    function nameCellRendererFunc() {
+		return '<span style="display: block;" ng-click="vm.dialogAssociateAppToUsers($event, data)">{{ data.name }}</span>';
+	}
+
+    function onFilterChanged(value) {
+	    $scope.gridOptions.api.setQuickFilter(value);
+	}
 
 	vm.getApps();
 
 	function getApps() {
 		AdminAppsServices.getApps()
 			.then(function mySuccess(response) {
-				vm.apps = response.data;
+				$scope.gridOptions.api.setRowData(response.data);
 		    }, function myError(response) {
 		        $log.log("Get apps failed");
 		    });
@@ -39,6 +110,7 @@
 	    	AdminAppsServices.createApp(result)
 		    	.then(function mySuccess(response) {
 					vm.getApps();
+					ToastService.displayToast("App created")
 			    }, function myError(response) {
 			        $log.log("Create app failed");
 			    });
@@ -63,6 +135,7 @@
 		    AdminAppsServices.updateApp(result, app.id)
 		    	.then(function mySuccess(response) {
 					app.name = result;
+	      			ToastService.displayToast("App edited")
 			    }, function myError(response) {
 			        $log.log("Edit app failed");
 			    });
@@ -89,8 +162,9 @@
 	       for (var i = vm.selectedApps.length - 1; i >= 0; i--) {
 	            AdminAppsServices.deleteApp(vm.selectedApps[i].id)
 	               	.then(function(response){
-	               		ToastServices.displayToast("App deleted");
-	                  	
+	               		vm.selectedApps = [];
+				        vm.getApps();
+	               		ToastService.displayToast("App deleted");
 	               	}, function(error){
 	                  	$log.error("Error when trying to delete apps : ", error);
 	            	});
@@ -117,6 +191,10 @@
 	  	else {
 			list.push(item);
 	  	}
+	}
+
+	function exists (item, list) {
+		return list.indexOf(item) > -1;
 	}
 
     function dialogAssociateAppToUsers(ev, app) {
