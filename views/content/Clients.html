@@ -1,29 +1,37 @@
 ﻿<md-content ng-controller="AdminClientsController as vm" md-whiteframe="4">
-  <md-toolbar>
-    <div class='md-toolbar-tools'>
-      <h2>Clients</h2>
-      <span flex></span>
-      <md-button aria-label="Ajouter un client" class="md-fab md-mini" ng-click="vm.dialogCreateClient($event)">
-        <md-tooltip md-direction="bottom">Add</md-tooltip>
-        <md-icon>add</md-icon>
-      </md-button>
-      <md-button ng-if="vm.selectedClients.length === 1" aria-label="Edit client" class="md-fab md-mini" ng-click="vm.dialogEditClient($event)">
-        <md-tooltip md-direction="bottom">Edit</md-tooltip>
-        <md-icon>mode_edit</md-icon>
-      </md-button>
-      <md-button ng-if="vm.selectedClients.length > 0" aria-label="delete client" class="md-fab md-mini" ng-click="vm.dialogDeleteClient($event)">
-        <md-tooltip md-direction="bottom">Delete</md-tooltip>
-        <md-icon>delete</md-icon>
-      </md-button>
-    </div>
-  </md-toolbar>
-	<md-list>
-    	<md-list-item class="md-2-line" ng-repeat="client in vm.clients" class="md-list-item-text compact" ng-click="vm.dialogAssociateClientToUsers($event, client)">
-    		  <md-checkbox aria-label="Selected client" ng-click="vm.toggle(client, vm.selectedClients)" ></md-checkbox>
-        <div class="md-list-item-text">
-          {{ client.name }}
-          <p>({{ client.abreviation }})</p>
+  <div layout="column" id="contentElement">
+    <md-toolbar>
+      <div class='md-toolbar-tools'>
+        <h2>Clients</h2>
+        <span flex></span>
+        <md-button aria-label="Ajouter un client" class="md-fab md-mini" ng-click="vm.dialogCreateClient($event)">
+          <md-tooltip md-direction="bottom">Add</md-tooltip>
+          <md-icon>add</md-icon>
+        </md-button>
+        <md-button ng-if="vm.selectedClients.length === 1" aria-label="Edit client" class="md-fab md-mini" ng-click="vm.dialogEditClient($event)">
+          <md-tooltip md-direction="bottom">Edit</md-tooltip>
+          <md-icon>mode_edit</md-icon>
+        </md-button>
+        <md-button ng-if="vm.selectedClients.length > 0" aria-label="delete client" class="md-fab md-mini" ng-click="vm.dialogDeleteClient($event)">
+          <md-tooltip md-direction="bottom">Delete</md-tooltip>
+          <md-icon>delete</md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+
+    <md-content layout-padding>
+      <div layout="column">
+        <div layout="row">
+          <div flex-offset="80"></div>
+          <div flex>
+            <input placeholder="Filter ..." class="filterInput" type="text" ng-model="filter" ng-change="onFilterChanged(filter)"/>
+          </div>
         </div>
-    	</md-list-item>
-  	</md-list>
+
+        <div style="padding-top: 26px; box-sizing: border-box;">
+            <div id="myGrid" ag-grid="gridOptions" class="ag-theme-material"></div>
+        </div>
+      </div>
+    </md-content>
+  </div>
 </md-content>

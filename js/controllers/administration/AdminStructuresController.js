@@ -1,26 +1,97 @@
-﻿AdminApp.controller('AdminStructuresController' , ['$rootScope', '$scope', '$log', '$state', '$mdDialog', 'AdminStructuresServices', 'ToastService', function ($rootScope, $scope, $log, $state, $mdDialog, AdminStructuresServices, ToastService){
+﻿AdminApp.controller('AdminStructuresController' , ['$rootScope', '$scope', '$log', '$state', '$mdDialog', 'AdminStructuresServices', 'ToastService', 
+		function ($rootScope, $scope, $log, $state, $mdDialog, AdminStructuresServices, ToastService){
 
 	var vm = this;
 
 	// Datas
 	vm.structures = [];
 	vm.selectedStructures = [];
-
-	// Methods
 	vm.getStructures = getStructures;
 	vm.dialogCreateStructure = dialogCreateStructure;
 	vm.dialogEditStructure = dialogEditStructure;
 	vm.dialogDeleteStructure = dialogDeleteStructure;
 	vm.dialogAssociateStructureToUsers = dialogAssociateStructureToUsers;
+	vm.exists = exists;
+	$scope.onFilterChanged = onFilterChanged;
 	vm.removeItem = removeItem;
+	vm.setWidthAndHeight = setWidthAndHeight;
 	vm.toggle = toggle;
+
+	// ag-grid data
+	vm.sortReverse = false;
+	vm.sortType = 'Name';
+
+    var columnDefs = [
+	   {headerName: "", field: "checked", width: 80, cellRenderer: checkedCellRendererFunc, suppressSizeToFit: true, suppressFilter: true},
+	   {headerName: "Name", field: "name", cellRenderer: nameCellRendererFunc}
+	];
+
+	$scope.gridOptions = {
+        columnDefs: columnDefs,
+        rowData: null,
+        angularCompileRows: true,
+        enableColResize : true,
+        enableSorting : true,
+	    onGridReady: function(params) {
+	    	//using setTimeout because 
+	    	//gridReady get's called before data is bound
+            setTimeout(function(){
+             	params.api.sizeColumnsToFit();
+            }, 1000);
+	    }
+    };
+    // end ag-grid data
+
+    var w = window,
+	    d = document,
+	    e = d.documentElement,
+	    g = d.getElementsByTagName('body')[0],
+	    x = w.innerWidth || e.clientWidth || g.clientWidth,
+	    y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+
+	var contentElement = document.querySelector('#contentElement');
+	var myGrid = document.querySelector('#myGrid');
+
+	// Methods
+	function setWidthAndHeight(width, height, element) {
+    	if (width != '' && element !== null) {
+    		element.style.width = width;
+    	}
+    	if (height != '' && element !== null) {
+    		element.style.height = height;
+    	}
+	}
+
+	if (y > 870) {
+		setWidthAndHeight('', '89%', contentElement);
+	} else {
+		setWidthAndHeight('', '85%', contentElement);
+	}
+
+	if (y > 870) {
+		setWidthAndHeight('', '78%', myGrid);
+	} else {
+		setWidthAndHeight('', '70%', myGrid);
+	}
+
+    function checkedCellRendererFunc() {
+		return '<md-checkbox class="mdCheckboxAgGrid" ng-check="exists(structure, vm.selectedStructures)" ng-model="data.checked" aria-label="Selected structure" ng-click="vm.toggle(data, vm.selectedStructures); vm.showSelectedStrctures()"></md-checkbox>';
+	}
+
+    function nameCellRendererFunc() {
+		return '<span style="display: block;" ng-click="vm.dialogAssociateStructureToUsers($event, data)">{{ data.name }}</span>';
+	}
+
+    function onFilterChanged(value) {
+	    $scope.gridOptions.api.setQuickFilter(value);
+	}
 
 	vm.getStructures();
 
 	function getStructures() {
 		AdminStructuresServices.getStructures()
 			.then(function mySuccess(response) {
-				vm.structures = response.data;
+				$scope.gridOptions.api.setRowData(response.data);
 		    }, function myError(response) {
 		        $log.log("Get structures failed");
 		    });
@@ -43,6 +114,7 @@
 	    .then(function(answer) {
 	    	vm.selectedStructures = [];
 	      	vm.getStructures();
+	      	ToastService.displayToast("Structure created")
 	    }, function() {
 	      // Dialog closed
 	    });
@@ -66,6 +138,7 @@
 	    .then(function(answer) {
 	    	vm.selectedStructures = [];
 	      	vm.getStructures();
+	      	ToastService.displayToast("Structure edited")
 	    }, function() {
 	      // Dialog closed
 	    });
@@ -89,7 +162,9 @@
 	       for (var i = vm.selectedStructures.length - 1; i >= 0; i--) {
 	            AdminStructuresServices.deleteStructure(vm.selectedStructures[i].id)
 	               	.then(function(response){
-	               		ToastServices.displayToast("Structure deleted");
+	               		vm.selectedStructures = [];
+	               		vm.getStructures();
+	               		ToastService.displayToast("Structure deleted");
 	                  	
 	               	}, function(error){
 	                  	$log.error("Error when trying to delete structures : ", error);
@@ -117,6 +192,10 @@
 	  	else {
 			list.push(item);
 	  	}
+	}
+
+	function exists (item, list) {
+		return list.indexOf(item) > -1;
 	}
 
     function dialogAssociateStructureToUsers(ev, structure) {

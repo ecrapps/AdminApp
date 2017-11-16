@@ -24,3 +24,11 @@ body {
 .ag-theme-material .ag-row:hover .md-button.smallCommentsButton {
     opacity: 1;
 }
+
+/* Page Login */
+#line-break{
+	background-image: url("../assets/img/line.png");
+	background-repeat: repeat-x;
+	height: 5px;
+    margin: 0 16px;
+}

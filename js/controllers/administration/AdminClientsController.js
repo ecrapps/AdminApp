@@ -1,26 +1,97 @@
-﻿AdminApp.controller('AdminClientsController' , ['$rootScope', '$scope', '$log', '$state', '$mdDialog', 'AdminClientsServices', 'ToastService', function ($rootScope, $scope, $log, $state, $mdDialog, AdminClientsServices, ToastService){
+﻿AdminApp.controller('AdminClientsController' , ['$rootScope', '$scope', '$log', '$state', '$mdDialog', 'AdminClientsServices', 'ToastService', 
+		function ($rootScope, $scope, $log, $state, $mdDialog, AdminClientsServices, ToastService){
 
 	var vm = this;
 
 	// Datas
 	vm.clients = [];
 	vm.selectedClients = [];
-
-	// Methods
 	vm.getClients = getClients;
 	vm.dialogCreateClient = dialogCreateClient;
 	vm.dialogEditClient = dialogEditClient;
 	vm.dialogDeleteClient = dialogDeleteClient;
 	vm.dialogAssociateClientToUsers = dialogAssociateClientToUsers;
+	vm.exists = exists;
+	$scope.onFilterChanged = onFilterChanged;
 	vm.removeItem = removeItem;
+	vm.setWidthAndHeight = setWidthAndHeight;
 	vm.toggle = toggle;
+
+	// ag-grid data
+	vm.sortReverse = false;
+	vm.sortType = 'Name';
+
+    var columnDefs = [
+	   {headerName: "", field: "checked", width: 80, cellRenderer: checkedCellRendererFunc, suppressSizeToFit: true, suppressFilter: true},
+	   {headerName: "Name", field: "name", cellRenderer: nameCellRendererFunc}
+	];
+
+	$scope.gridOptions = {
+        columnDefs: columnDefs,
+        rowData: null,
+        angularCompileRows: true,
+        enableColResize : true,
+        enableSorting : true,
+	    onGridReady: function(params) {
+	    	//using setTimeout because 
+	    	//gridReady get's called before data is bound
+            setTimeout(function(){
+             	params.api.sizeColumnsToFit();
+            }, 1000);
+	    }
+    };
+    // end ag-grid data
+
+    var w = window,
+	    d = document,
+	    e = d.documentElement,
+	    g = d.getElementsByTagName('body')[0],
+	    x = w.innerWidth || e.clientWidth || g.clientWidth,
+	    y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+
+	var contentElement = document.querySelector('#contentElement');
+	var myGrid = document.querySelector('#myGrid');
+
+	// Methods
+	function setWidthAndHeight(width, height, element) {
+    	if (width != '' && element !== null) {
+    		element.style.width = width;
+    	}
+    	if (height != '' && element !== null) {
+    		element.style.height = height;
+    	}
+	}
+
+	if (y > 870) {
+		setWidthAndHeight('', '89%', contentElement);
+	} else {
+		setWidthAndHeight('', '85%', contentElement);
+	}
+
+	if (y > 870) {
+		setWidthAndHeight('', '78%', myGrid);
+	} else {
+		setWidthAndHeight('', '70%', myGrid);
+	}
+
+    function checkedCellRendererFunc() {
+		return '<md-checkbox class="mdCheckboxAgGrid" ng-check="exists(client, vm.selectedClients)" ng-model="data.checked" aria-label="Selected client" ng-click="vm.toggle(data, vm.selectedClients); vm.showSelectedClients()"></md-checkbox>';
+	}
+
+    function nameCellRendererFunc() {
+		return '<span style="display: block;" ng-click="vm.dialogAssociateClientToUsers($event, data)">{{ data.name }}</span>';
+	}
+
+    function onFilterChanged(value) {
+	    $scope.gridOptions.api.setQuickFilter(value);
+	}
 
 	vm.getClients();
 
 	function getClients() {
 		AdminClientsServices.getClients()
 			.then(function mySuccess(response) {
-				vm.clients = response.data;
+				$scope.gridOptions.api.setRowData(response.data);
 		    }, function myError(response) {
 		        $log.log("Get clients failed");
 		    });
@@ -43,6 +114,7 @@
 	    .then(function(answer) {
 	    	vm.selectedClients = [];
 	      	vm.getClients();
+	      	ToastService.displayToast("Client created")
 	    }, function() {
 	      // Dialog closed
 	    });
@@ -66,6 +138,7 @@
 	    .then(function(answer) {
 	    	vm.selectedClients = [];
 	      	vm.getClients();
+	      	ToastService.displayToast("Client edited")
 	    }, function() {
 	      // Dialog closed
 	    });
@@ -89,8 +162,9 @@
 	       for (var i = vm.selectedClients.length - 1; i >= 0; i--) {
 	            AdminClientsServices.deleteClient(vm.selectedClients[i].id)
 	               	.then(function(response){
-	               		ToastServices.displayToast("Client deleted");
-	                  	
+	               		vm.selectedClients = [];
+	      				vm.getClients();
+	               		ToastService.displayToast("Client deleted");
 	               	}, function(error){
 	                  	$log.error("Error when trying to delete clients : ", error);
 	            	});
@@ -117,6 +191,10 @@
 	  	else {
 			list.push(item);
 	  	}
+	}
+
+	function exists (item, list) {
+		return list.indexOf(item) > -1;
 	}
 
     function dialogAssociateClientToUsers(ev, client) {
