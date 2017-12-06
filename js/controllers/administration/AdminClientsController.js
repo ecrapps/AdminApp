@@ -10,7 +10,7 @@
 	vm.dialogCreateClient = dialogCreateClient;
 	vm.dialogEditClient = dialogEditClient;
 	vm.dialogDeleteClient = dialogDeleteClient;
-	vm.dialogAssociateClientToUsers = dialogAssociateClientToUsers;
+	vm.dialogAssociateClientToStructures = dialogAssociateClientToStructures;
 	vm.exists = exists;
 	$scope.onFilterChanged = onFilterChanged;
 	vm.removeItem = removeItem;
@@ -79,7 +79,7 @@
 	}
 
     function nameCellRendererFunc() {
-		return '<span style="display: block;" ng-click="vm.dialogAssociateClientToUsers($event, data)">{{ data.name }}</span>';
+		return '<span style="display: block;" ng-click="vm.dialogAssociateClientToStructures($event, data)">{{ data.name }}</span>';
 	}
 
     function onFilterChanged(value) {
@@ -197,11 +197,10 @@
 		return list.indexOf(item) > -1;
 	}
 
-    function dialogAssociateClientToUsers(ev, client) {
+    function dialogAssociateClientToStructures(ev, client) {
 	    $mdDialog.show({
 	      controller: AssociateUsersToClientController,
-	      templateUrl: 'views/dialogs/GenericModalAssociate.html',
-	      windowClass: 'large-Modal',
+	      templateUrl: 'views/dialogs/EditingClient.html',
 	      parent: angular.element(document.body),
 	      locals: {
 	      	client: client
@@ -217,54 +216,54 @@
 	    });
 	};
 
-	//Modal controllers to associate clients to client
-   	function AssociateUsersToClientController($scope, $log, $mdToast, $mdDialog, AdminUsersServices, client) {
+	//Modal controllers to associate structures to client
+   	function AssociateUsersToClientController($scope, $log, $mdToast, $mdDialog, AdminStructuresServices, client) {
 
    		// Datas
    		$scope.client = client;
    		$scope.modal = {
-   			filter: "users",
-   			title: "Users for "+client.name
+   			filterStructure: "structures",
+   			title: "Structures for " + client.name
    		}
-   		$scope.rowCollection = [];
-   		$scope.selectedList = [];
-   		$scope.initializedSelectedList = [];
+   		$scope.structures = [];
+   		$scope.selectedStructures = [];
+   		$scope.initializedSelectedStructures = [];
 
    		// Methods
-   		$scope.toggle = toggle;
-   		$scope.exists =  exists;
-   		$scope.getUsers = getUsers;
-   		$scope.getUsersInClient = getUsersInClient;
-   		$scope.hide = hide;
-   		$scope.cancel = cancel;
    		$scope.apply = apply;
+   		$scope.cancel = cancel;
+   		$scope.exists = exists;
+   		$scope.hide = hide;
+   		$scope.getStructures = getStructures;
+   		$scope.getStructuresInClient = getStructuresInClient;
+   		$scope.toggle = toggle;
 
    		function apply() {
-   			var tmpDelete = $scope.initializedSelectedList;
-   			var tmpAdd = $scope.selectedList;
+   			var tmpDeleteStructure = $scope.initializedSelectedStructures;
+   			var tmpAddStructure = $scope.selectedStructures;
    			var idx = -1;
-	      	for (var i = tmpDelete.length - 1; i >= 0; i--) {
+	      	for (var i = tmpDeleteStructure.length - 1; i >= 0; i--) {
 	      		notFound = true;
-	      		for (var j = tmpAdd.length - 1; j >= 0 && notFound; j--) {
-	    			if (tmpDelete[i].idUser == tmpAdd[j].idUser) {
-	    				tmpDelete.splice(i, 1);
-	    				tmpAdd.splice(j, 1);
+	      		for (var j = tmpAddStructure.length - 1; j >= 0 && notFound; j--) {
+	    			if (tmpDeleteStructure[i].id == tmpAddStructure[j].id) {
+	    				tmpDeleteStructure.splice(i, 1);
+	    				tmpAddStructure.splice(j, 1);
 	    				notFound = false;
 	    			}
 	    		}
 	    	}
-   			for (var i = tmpDelete.length - 1; i >= 0; i--) {
-   				AdminUsersServices.deleteUserClient(tmpDelete[i].idUser, client.id)
+   			for (var i = tmpDeleteStructure.length - 1; i >= 0; i--) {
+   				AdminStructuresServices.deleteStructureClient(tmpDeleteStructure[i].id, client.id)
 					.then(function mySuccess(response) {
 				    }, function myError(response) {
-				        $log.log("Get clients by clients failed");
+				        $log.log("Delete structures by client failed");
 				    });
    			}
-   			for (var i = tmpAdd.length - 1; i >= 0; i--) {
-   				AdminUsersServices.associateUserClient(tmpAdd[i].idUser, client.id)
+   			for (var i = tmpAddStructure.length - 1; i >= 0; i--) {
+   				AdminStructuresServices.associateStructureClient(tmpAddStructure[i].id, client.id)
 					.then(function mySuccess(response) {
 				    }, function myError(response) {
-				        $log.log("Get clients by clients failed");
+				        $log.log("Associate structures by client failed");
 				    });
    			}
 
@@ -274,42 +273,42 @@
 	   	function toggle (item, list) {
 	      	var idx = -1;
 	      	for (var i = list.length - 1; i >= 0; i--) {
-	    		if (list[i].idUser == item.id)
+	    		if (list[i].id == item.id)
 	    			idx = i;
 	    	}
 	      	if (idx > -1) {
 				list.splice(idx, 1);
 	      	}
 	      	else {
-	         	list.push({idUser: item.id});
+	         	list.push({id: item.id});
 	      	}
 	    }
 
 	    function exists (item, list) {
 	    	for (var i = list.length - 1; i >= 0; i--) {
-	    		if (list[i].idUser == item.id)
+	    		if (list[i].id == item.id)
 	    			return true;
 	    	}
 	    	return false;
 	      	// return list.indexOf(item.id) > -1;
 	   	}
 
-   		function getUsers() {
-			AdminUsersServices.getUsers()
+   		function getStructures() {
+			AdminStructuresServices.getStructures()
 				.then(function mySuccess(response) {
-					$scope.rowCollection = response.data;
+					$scope.structures = response.data;
 			    }, function myError(response) {
-			        $log.log("Get users failed");
+			        $log.log("Get structures failed");
 			    });
 		}
 
-		function getUsersInClient() {
-			AdminUsersServices.getUsersInClient(client.id)
+		function getStructuresInClient() {
+			AdminStructuresServices.getStructuresInClient(client.id)
 				.then(function mySuccess(response) {
-					$scope.selectedList = angular.copy(response.data);
-					$scope.initializedSelectedList = angular.copy(response.data);
+					$scope.selectedStructures = angular.copy(response.data);
+					$scope.initializedSelectedStructures = angular.copy(response.data);
 			    }, function myError(response) {
-			        $log.log("Get users in client failed");
+			        $log.log("Get structures in client failed");
 			    });
 		}
 
@@ -321,8 +320,8 @@
 	       	$mdDialog.cancel();
 	    }
 
-	    $scope.getUsers();
-		$scope.getUsersInClient();
+	    $scope.getStructures();
+		$scope.getStructuresInClient();
    	}
 
    	//Modal controllers to create client

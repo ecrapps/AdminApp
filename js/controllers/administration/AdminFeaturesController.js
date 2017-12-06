@@ -84,7 +84,7 @@
 	       for (var i = vm.selectedFeatures.length - 1; i >= 0; i--) {
 	            AdminFeaturesServices.deleteFeature(vm.selectedFeatures[i].id)
 	               	.then(function(response){
-	               		ToastServices.displayToast("Feature deleted");
+	               		ToastService.displayToast("Feature deleted");
 	                  	
 	               	}, function(error){
 	                  	$log.error("Error when trying to delete features : ", error);

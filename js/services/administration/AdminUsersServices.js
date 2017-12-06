@@ -25,12 +25,23 @@ AdminApp.factory('AdminUsersServices', ['$http', 'URL_TRAIN_API', function ($htt
     }
 
     factory.updateUser = function(userRaw) {
-        var user = {
-            id : userRaw.id,
-            name : userRaw.name,
-            username : userRaw.username,
-            email : userRaw.email
+        if (userRaw.password) {
+            var user = {
+                id : userRaw.id,
+                name : userRaw.name,
+                username : userRaw.username,
+                email : userRaw.email,
+                password: userRaw.password
+            }
+        } else {
+            var user = {
+                id : userRaw.id,
+                name : userRaw.name,
+                username : userRaw.username,
+                email : userRaw.email
+            }
         }
+        
 
         return $http({
             method : "POST",

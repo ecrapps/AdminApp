@@ -1,5 +1,5 @@
-﻿AdminApp.controller('AdminUsersController' , ['$rootScope', '$scope', '$log', '$state', '$mdDialog', 'AdminUsersServices', 'ToastService', 
-		function ($rootScope, $scope, $log, $state, $mdDialog, AdminUsersServices, ToastService){
+﻿AdminApp.controller('AdminUsersController' , ['$rootScope', '$scope', '$log', '$state', '$mdDialog', 'AdminUsersServices', 'AdminStructuresServices', 'ToastService', 
+		function ($rootScope, $scope, $log, $state, $mdDialog, AdminUsersServices, AdminStructuresServices, ToastService){
 
 	var vm = this;
 
@@ -227,8 +227,7 @@
     function dialogAssociateUserToGroups(ev, user) {
 	    $mdDialog.show({
 	      controller: AssociateGroupsToUserController,
-	      templateUrl: 'views/dialogs/GenericModalAssociate.html',
-	      windowClass: 'large-Modal',
+	      templateUrl: 'views/dialogs/EditingUser.html',
 	      parent: angular.element(document.body),
 	      locals: {
 	      	user: user
@@ -245,86 +244,108 @@
 	};
 
 	//Modal controllers to associate users to user
-   	function AssociateGroupsToUserController($scope, $log, $mdToast, $mdDialog, AdminGroupsServices, user) {
+   	function AssociateGroupsToUserController($scope, $log, $mdToast, $mdDialog, AdminGroupsServices, AdminStructuresServices, user) {
 
    		// Datas
    		$scope.user = user;
    		$scope.modal = {
-   			filter: "groups",
-   			title: "Groups for " + user.name
+   			filterGroup: "groups",
+   			filterStructure: "structures",
+   			title: "Groups and corridor for " + user.name
    		}
-   		$scope.rowCollection = [];
-   		$scope.selectedList = [];
-   		$scope.initializedSelectedList = [];
+   		$scope.groups = [];
+   		$scope.structures = [];
+   		$scope.selectedGroups = [];
+   		$scope.selectedStructures = [];
+   		$scope.initializedSelectedGroups = [];
+   		$scope.initializedSelectedStructures = [];
 
    		// Methods
-   		$scope.toggle = toggle;
+   		$scope.apply = apply;
+   		$scope.cancel = cancel;
    		$scope.exists =  exists;
    		$scope.getGroups = getGroups;
    		$scope.getGroupsInUser = getGroupsInUser;
+   		$scope.getStructures = getStructures;
+   		$scope.getStructuresInUser = getStructuresInUser;
    		$scope.hide = hide;
-   		$scope.cancel = cancel;
-   		$scope.apply = apply;
+   		$scope.toggle = toggle;
 
    		function apply() {
-   			var tmpDelete = $scope.initializedSelectedList;
-   			var tmpAdd = $scope.selectedList;
+   			var tmpDeleteGroups = $scope.initializedSelectedGroups;
+   			var tmpAddGroups = $scope.selectedGroups;
+   			var tmpDeleteStructures = $scope.initializedSelectedStructures;
+   			var tmpAddStructures = $scope.selectedStructures;
    			var idx = -1;
-	      	for (var i = tmpDelete.length - 1; i >= 0; i--) {
+	      	for (var i = tmpDeleteGroups.length - 1; i >= 0; i--) {
 	      		notFound = true;
-	      		for (var j = tmpAdd.length - 1; j >= 0 && notFound; j--) {
-	    			if (tmpDelete[i].idGroup == tmpAdd[j].idGroup) {
-	    				tmpDelete.splice(i, 1);
-	    				tmpAdd.splice(j, 1);
+	      		for (var j = tmpAddGroups.length - 1; j >= 0 && notFound; j--) {
+	    			if (tmpDeleteGroups[i].id == tmpAddGroups[j].id) {
+	    				tmpDeleteGroups.splice(i, 1);
+	    				tmpAddGroups.splice(j, 1);
 	    				notFound = false;
 	    			}
 	    		}
 	    	}
-   			for (var i = tmpDelete.length - 1; i >= 0; i--) {
-   				AdminGroupsServices.deleteGroupUser(tmpDelete[i].idGroup, user.id)
+   			for (var i = tmpDeleteGroups.length - 1; i >= 0; i--) {
+   				AdminGroupsServices.deleteGroupUser(tmpDeleteGroups[i].id, user.id)
 					.then(function mySuccess(response) {
 				    }, function myError(response) {
-				        $log.log("Get users by users failed");
+				        $log.log("deleteGroupUser failed");
 				    });
    			}
-   			for (var i = tmpAdd.length - 1; i >= 0; i--) {
-   				AdminGroupsServices.associateGroupUser(tmpAdd[i].idGroup, user.id)
+   			for (var i = tmpAddGroups.length - 1; i >= 0; i--) {
+   				AdminGroupsServices.associateGroupUser(tmpAddGroups[i].id, user.id)
 					.then(function mySuccess(response) {
 				    }, function myError(response) {
-				        $log.log("Get users by users failed");
+				        $log.log("associateGroupUser failed");
+				    });
+   			}
+
+   			for (var i = tmpDeleteStructures.length - 1; i >= 0; i--) {
+	      		notFound = true;
+	      		for (var j = tmpAddStructures.length - 1; j >= 0 && notFound; j--) {
+	    			if (tmpDeleteStructures[i].id == tmpAddStructures[j].id) {
+	    				tmpDeleteStructures.splice(i, 1);
+	    				tmpAddStructures.splice(j, 1);
+	    				notFound = false;
+	    			}
+	    		}
+	    	}
+   			for (var i = tmpDeleteStructures.length - 1; i >= 0; i--) {
+   				AdminStructuresServices.deleteStructureUser(tmpDeleteStructures[i].id, user.id)
+					.then(function mySuccess(response) {
+				    }, function myError(response) {
+				        $log.log("deleteStructureUser failed");
+				    });
+   			}
+   			for (var i = tmpAddStructures.length - 1; i >= 0; i--) {
+   				AdminStructuresServices.associateStructureUser(tmpAddStructures[i].id, user.id)
+					.then(function mySuccess(response) {
+				    }, function myError(response) {
+				        $log.log("associateStructureUser failed");
 				    });
    			}
 
    			$scope.hide();
    		}
 
-	   	function toggle (item, list) {
-	      	var idx = -1;
-	      	for (var i = list.length - 1; i >= 0; i--) {
-	    		if (list[i].idGroup == item.id)
-	    			idx = i;
-	    	}
-	      	if (idx > -1) {
-				list.splice(idx, 1);
-	      	}
-	      	else {
-	         	list.push({idGroup: item.id});
-	      	}
+	    function cancel() {
+	       	$mdDialog.cancel();
 	    }
 
 	    function exists (item, list) {
 	    	for (var i = list.length - 1; i >= 0; i--) {
-	    		if (list[i].idGroup == item.id)
+	    		if (list[i].id == item.id)
 	    			return true;
 	    	}
 	    	return false;
-	      	// return list.indexOf(item.id) > -1;
 	   	}
 
    		function getGroups() {
 			AdminGroupsServices.getGroups()
 				.then(function mySuccess(response) {
-					$scope.rowCollection = response.data;
+					$scope.groups = response.data;
 			    }, function myError(response) {
 			        $log.log("Get groups failed");
 			    });
@@ -333,10 +354,29 @@
 		function getGroupsInUser() {
 			AdminGroupsServices.getGroupsInUser(user.id)
 				.then(function mySuccess(response) {
-					$scope.selectedList = angular.copy(response.data);
-					$scope.initializedSelectedList = angular.copy(response.data);
+					$scope.selectedGroups = angular.copy(response.data);
+					$scope.initializedSelectedGroups = angular.copy(response.data);
 			    }, function myError(response) {
 			        $log.log("Get groups in user failed");
+			    });
+		}
+
+   		function getStructures() {
+			AdminStructuresServices.getStructures()
+				.then(function mySuccess(response) {
+					$scope.structures = response.data;
+			    }, function myError(response) {
+			        $log.log("Get structures failed");
+			    });
+		}
+
+		function getStructuresInUser() {
+			AdminStructuresServices.getStructuresInUser(user.id)
+				.then(function mySuccess(response) {
+					$scope.selectedStructures = angular.copy(response.data);
+					$scope.initializedSelectedStructures = angular.copy(response.data);
+			    }, function myError(response) {
+			        $log.log("Get structures in user failed");
 			    });
 		}
 
@@ -344,12 +384,24 @@
 	       	$mdDialog.hide();
 	    }
 
-	    function cancel() {
-	       	$mdDialog.cancel();
+	   	function toggle (item, list) {
+	      	var idx = -1;
+	      	for (var i = list.length - 1; i >= 0; i--) {
+	    		if (list[i].id == item.id)
+	    			idx = i;
+	    	}
+	      	if (idx > -1) {
+				list.splice(idx, 1);
+	      	}
+	      	else {
+	         	list.push({id: item.id});
+	      	}
 	    }
 
 	    $scope.getGroups();
+		$scope.getStructures();
 		$scope.getGroupsInUser();
+		$scope.getStructuresInUser();
    	}
 
    	//Modal controllers to create user

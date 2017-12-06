@@ -78,5 +78,40 @@ AdminApp.factory('AdminGroupsServices', ['$http', 'URL_TRAIN_API', function ($ht
         });
     }
 
+    factory.deleteGroupApp = function(idGroup, idApp) {
+        var data = {
+            idGroup : idGroup,
+            idApp : idApp
+        };
+        return $http({
+            method : "POST",
+            url : url_api + "deleteGroupApp", 
+            data: data
+        });
+    }
+
+    factory.associateGroupApp = function(idGroup, idApp) {
+        var data = {
+            idGroup : idGroup,
+            idApp : idApp
+        };
+        return $http({
+            method : "POST",
+            url : url_api + "associateGroupApp", 
+            data: data
+        });
+    }
+
+    factory.getGroupsInApp = function(idApp) {
+        var data = {
+            idApp : idApp
+        };
+        return $http({
+            method : "GET",
+            url : url_api + "getGroupsInApp",
+            params: data
+        });
+    }
+
     return factory;
 }]);

@@ -45,6 +45,65 @@ AdminApp.factory('AdminStructuresServices', ['$http', 'URL_TRAIN_API', function 
         });
     }
 
+    factory.associateStructureUser = function(idStructure, idUser) {
+        var data = {
+            idStructure : idStructure,
+            idUser : idUser
+        };
+        return $http({
+            method : "POST",
+            url : url_api + "associateStructureUser", 
+            data: data
+        });
+    }
+
+    factory.deleteStructureUser = function(idStructure, idUser) {
+        var data = {
+            idStructure : idStructure,
+            idUser : idUser
+        };
+        return $http({
+            method : "POST",
+            url : url_api + "deleteStructureUser", 
+            data: data
+        });
+    }
+
+    factory.associateStructureClient = function(idStructure, idClient) {
+        var data = {
+            idStructure : idStructure,
+            idClient : idClient
+        };
+        return $http({
+            method : "POST",
+            url : url_api + "associateStructureClient", 
+            data: data
+        });
+    }
+
+    factory.getStructuresInClient = function(idClient) {
+        var data = {
+            idClient : idClient
+        };
+        return $http({
+            method : "GET",
+            url : url_api + "getStructuresInClient", 
+            params: data
+        });
+    }
+
+    factory.deleteStructureClient = function(idStructure, idClient) {
+        var data = {
+            idStructure : idStructure,
+            idClient : idClient
+        };
+        return $http({
+            method : "POST",
+            url : url_api + "deleteStructureClient", 
+            data: data
+        });
+    }
+
     factory.getStructuresInUser = function(idUser) {
         var data = {
             idUser : idUser

@@ -1,0 +1,57 @@
+<md-dialog flex=60>
+	<md-toolbar>
+		<div class="md-toolbar-tools">
+			<h2>{{ modal.title }}</h2>
+			<span flex></span>
+	        <md-button class="md-icon-button" ng-click="cancel()">
+	          <md-icon aria-label="Close dialog">close</md-icon>
+	        </md-button>
+		</div>
+	</md-toolbar>
+	
+  <div layout="row">
+  	<md-dialog-content layout-padding flex=50>
+        <md-input-container layout="row">
+          <label>Filter by {{ modal.filterGroup }}</label>
+          <input ng-model="filter_search_group">
+        </md-input-container>
+        <md-list>
+          <md-virtual-repeat-container id="associate-list-container">
+            <md-list-item md-virtual-repeat="group in groups | filter : filter_search_group" class="md-list-item-text compact" ng-click="toggle(group, selectedGroups)">
+              <md-checkbox ng-checked="exists(group, selectedGroups)" aria-label="selection" ng-click="toggle(group, selectedGroups)" ></md-checkbox>
+              <div class="md-list-item-text">
+                  {{ group.name }}
+              </div>
+            </md-list-item>
+          </md-virtual-repeat-container>
+        </md-list>
+      </md-dialog-content>
+
+      <md-dialog-content layout-padding flex=50>
+        <md-input-container layout="row">
+          <label>Filter by {{ modal.filterStructure }}</label>
+          <input ng-model="filter_search_structure">
+        </md-input-container>
+        <md-list>
+          <md-virtual-repeat-container id="associate-list-container">
+            <md-list-item md-virtual-repeat="structure in structures | filter : filter_search_structure" class="md-list-item-text compact" ng-click="toggle(structure, selectedStructures)">
+              <md-checkbox ng-checked="exists(structure, selectedStructures)" aria-label="selection" ng-click="toggle(structure, selectedStructures)" ></md-checkbox>
+              <div class="md-list-item-text">
+                  {{ structure.name }}
+              </div>
+            </md-list-item>
+          </md-virtual-repeat-container>
+        </md-list>
+      </md-dialog-content>
+    </div>
+
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button ng-click="cancel()">
+        Cancel
+      </md-button>
+      <md-button ng-click="apply()">
+        Apply
+      </md-button>
+    </md-dialog-actions>
+</md-dialog>

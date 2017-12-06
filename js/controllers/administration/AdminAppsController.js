@@ -10,7 +10,7 @@
 	vm.dialogCreateApp = dialogCreateApp;
 	vm.dialogEditApp = dialogEditApp;
 	vm.dialogDeleteApp = dialogDeleteApp;
-	vm.dialogAssociateAppToUsers = dialogAssociateAppToUsers;
+	vm.dialogAssociateAppToGroups = dialogAssociateAppToGroups;
 	vm.exists = exists;
 	$scope.onFilterChanged = onFilterChanged;
 	vm.removeItem = removeItem;
@@ -79,7 +79,7 @@
 	}
 
     function nameCellRendererFunc() {
-		return '<span style="display: block;" ng-click="vm.dialogAssociateAppToUsers($event, data)">{{ data.name }}</span>';
+		return '<span style="display: block;" ng-click="vm.dialogAssociateAppToGroups($event, data)">{{ data.name }}</span>';
 	}
 
     function onFilterChanged(value) {
@@ -197,11 +197,10 @@
 		return list.indexOf(item) > -1;
 	}
 
-    function dialogAssociateAppToUsers(ev, app) {
+    function dialogAssociateAppToGroups(ev, app) {
 	    $mdDialog.show({
-	      controller: AssociateUsersToAppController,
-	      templateUrl: 'views/dialogs/GenericModalAssociate.html',
-	      windowClass: 'large-Modal',
+	      controller: AssociateGroupsToAppController,
+	      templateUrl: 'views/dialogs/EditingApp.html',
 	      parent: angular.element(document.body),
 	      locals: {
 	      	app: app
@@ -218,100 +217,100 @@
 	};
 
 	//Modal controllers to associate features to app
-   	function AssociateUsersToAppController($scope, $log, $mdToast, $mdDialog, AdminUsersServices, app) {
+   	function AssociateGroupsToAppController($scope, $log, $mdToast, $mdDialog, AdminGroupsServices, app) {
 
    		// Datas
    		$scope.app = app;
    		$scope.modal = {
-   			filter: "utilisateurs",
-   			title: "Users for " + app.name
+   			filterGroup: "groups",
+   			title: "Groups for " + app.name
    		}
-   		$scope.rowCollection = [];
-   		$scope.selectedList = [];
-   		$scope.initializedSelectedList = [];
+   		$scope.groups = [];
+   		$scope.selectedGroups = [];
+   		$scope.initializedSelectedGroups = [];
 
    		// Methods
-   		$scope.toggle = toggle;
-   		$scope.exists =  exists;
-   		$scope.getUsers = getUsers;
-   		$scope.getUsersInApp = getUsersInApp;
-   		$scope.hide = hide;
-   		$scope.cancel = cancel;
    		$scope.apply = apply;
+   		$scope.cancel = cancel;
+   		$scope.exists = exists;
+   		$scope.hide = hide;
+   		$scope.getGroups = getGroups;
+   		$scope.getGroupsInApp = getGroupsInApp;
+   		$scope.toggle = toggle;
 
    		function apply() {
-   			var tmpDelete = $scope.initializedSelectedList;
-   			var tmpAdd = $scope.selectedList;
+   			var tmpDeleteGroup = $scope.initializedSelectedGroups;
+   			var tmpAddGroup = $scope.selectedGroups;
    			var idx = -1;
-	      	for (var i = tmpDelete.length - 1; i >= 0; i--) {
+	      	for (var i = tmpDeleteGroup.length - 1; i >= 0; i--) {
 	      		notFound = true;
-	      		for (var j = tmpAdd.length - 1; j >= 0 && notFound; j--) {
-	    			if (tmpDelete[i].idUser == tmpAdd[j].idUser) {
-	    				tmpDelete.splice(i, 1);
-	    				tmpAdd.splice(j, 1);
+	      		for (var j = tmpAddGroup.length - 1; j >= 0 && notFound; j--) {
+	    			if (tmpDeleteGroup[i].id == tmpAddGroup[j].id) {
+	    				tmpDeleteGroup.splice(i, 1);
+	    				tmpAddGroup.splice(j, 1);
 	    				notFound = false;
 	    			}
 	    		}
 	    	}
-   			for (var i = tmpDelete.length - 1; i >= 0; i--) {
-   				AdminUsersServices.deleteUserApp(tmpDelete[i].idUser, app.id)
+   			for (var i = tmpDeleteGroup.length - 1; i >= 0; i--) {
+   				AdminGroupsServices.deleteGroupApp(tmpDeleteGroup[i].id, app.id)
 					.then(function mySuccess(response) {
 				    }, function myError(response) {
-				        $log.log("Get features by apps failed");
+				        $log.log("Delete groups by app failed");
 				    });
    			}
-   			for (var i = tmpAdd.length - 1; i >= 0; i--) {
-   				AdminUsersServices.associateUserApp(tmpAdd[i].idUser, app.id)
+   			for (var i = tmpAddGroup.length - 1; i >= 0; i--) {
+   				AdminGroupsServices.associateGroupApp(tmpAddGroup[i].id, app.id)
 					.then(function mySuccess(response) {
 				    }, function myError(response) {
-				        $log.log("Get features by apps failed");
+				        $log.log("Associate groups by app failed");
 				    });
    			}
 
    			$scope.hide();
    		}
 
+   		function getGroups() {
+			AdminGroupsServices.getGroups()
+				.then(function mySuccess(response) {
+					$scope.groups = response.data;
+			    }, function myError(response) {
+			        $log.log("Get groups failed");
+			    });
+		}
+
+		function getGroupsInApp() {
+			AdminGroupsServices.getGroupsInApp(app.id)
+				.then(function mySuccess(response) {
+					$scope.selectedGroups = angular.copy(response.data);
+					$scope.initializedSelectedGroups = angular.copy(response.data);
+			    }, function myError(response) {
+			        $log.log("Get groups in app failed");
+			    });
+		}
+
 	   	function toggle (item, list) {
 	      	var idx = -1;
 	      	for (var i = list.length - 1; i >= 0; i--) {
-	    		if (list[i].idUser == item.id)
+	    		if (list[i].id == item.id)
 	    			idx = i;
 	    	}
 	      	if (idx > -1) {
 				list.splice(idx, 1);
 	      	}
 	      	else {
-	         	list.push({idUser: item.id});
+	         	list.push({id: item.id});
 	      	}
 	    }
 
 	    function exists (item, list) {
 	    	for (var i = list.length - 1; i >= 0; i--) {
-	    		if (list[i].idUser == item.id)
+	    		if (list[i].id == item.id)
 	    			return true;
 	    	}
 	    	return false;
 	      	// return list.indexOf(item.id) > -1;
 	   	}
-
-   		function getUsers() {
-			AdminUsersServices.getUsers()
-				.then(function mySuccess(response) {
-					$scope.rowCollection = response.data;
-			    }, function myError(response) {
-			        $log.log("Get users failed");
-			    });
-		}
-
-		function getUsersInApp() {
-			AdminUsersServices.getUsersInApp(app.id)
-				.then(function mySuccess(response) {
-					$scope.selectedList = angular.copy(response.data);
-					$scope.initializedSelectedList = angular.copy(response.data);
-			    }, function myError(response) {
-			        $log.log("Get users in app failed");
-			    });
-		}
 
    		function hide() {
 	       	$mdDialog.hide();
@@ -321,7 +320,7 @@
 	       	$mdDialog.cancel();
 	    }
 
-	    $scope.getUsers();
-		$scope.getUsersInApp();
+	    $scope.getGroups();
+		$scope.getGroupsInApp();
    	}
 }]);
